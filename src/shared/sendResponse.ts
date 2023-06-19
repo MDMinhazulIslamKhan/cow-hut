@@ -7,7 +7,7 @@ type IApiResponse<T> = {
   meta?: {
     page: number;
     limit: number;
-    total: number;
+    count: number;
   };
   data?: T | null;
 };

@@ -13,7 +13,10 @@ app.use(express.urlencoded({ extended: true }));
 
 // Testing
 app.get('/', (req: Request, res: Response) => {
-  res.send('Working Successfully');
+  return res.status(200).json({
+    success: true,
+    message: 'Working Successfully',
+  });
 });
 
 app.use('/api/v1', ApplicationRouters);
