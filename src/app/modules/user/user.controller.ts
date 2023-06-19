@@ -52,7 +52,9 @@ const updateUser = catchAsync(async (req: Request, res: Response) => {
   const user = req.body;
 
   // password hashing
-  user.password = await bcrypt.hash(user.password, 10);
+  if (user.password) {
+    user.password = await bcrypt.hash(user.password, 10);
+  }
 
   const result = await UserService.updateUser(id, user);
 
