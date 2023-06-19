@@ -53,7 +53,9 @@ const updateUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
     const id = req.params.id;
     const user = req.body;
     // password hashing
-    user.password = yield bcrypt_1.default.hash(user.password, 10);
+    if (user.password) {
+        user.password = yield bcrypt_1.default.hash(user.password, 10);
+    }
     const result = yield user_service_1.UserService.updateUser(id, user);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
