@@ -30,6 +30,11 @@ const updateUser = async (
   id: string,
   payload: Partial<IUser>
 ): Promise<IUser | null> => {
+  const checkNumber = await User.findOne({ phoneNumber: payload.phoneNumber });
+
+  if (checkNumber) {
+    throw new ApiError(httpStatus.CONFLICT, 'Already used this number!!!');
+  }
   const result = await User.findOneAndUpdate({ _id: id }, payload, {
     new: true,
   });

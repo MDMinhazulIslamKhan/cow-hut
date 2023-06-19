@@ -47,12 +47,11 @@ export const cowBreed: Breed[] = [
 ];
 
 export const cowFilterableField = [
+  'searchTerm',
+  'minPrice',
+  'maxPrice',
   'location',
   'breed',
   'category',
-  'age',
-  'price',
-  'age',
-  'weight',
   'label',
 ];

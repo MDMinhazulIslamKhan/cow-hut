@@ -42,8 +42,12 @@ const createCow = (cow) => __awaiter(void 0, void 0, void 0, function* () {
     return createdCow;
 });
 const getAllCows = (filters, paginationOptions) => __awaiter(void 0, void 0, void 0, function* () {
-    const { searchTerm } = filters, filtersData = __rest(filters, ["searchTerm"]);
+    const { searchTerm, minPrice = 0, maxPrice = Infinity } = filters, filtersData = __rest(filters, ["searchTerm", "minPrice", "maxPrice"]);
     const andConditions = [];
+    // for filter price
+    andConditions.push({
+        $and: [{ price: { $gte: minPrice } }, { price: { $lte: maxPrice } }],
+    });
     // for filter data
     if (searchTerm) {
         andConditions.push({
@@ -86,9 +90,11 @@ const getSingleCow = (id) => __awaiter(void 0, void 0, void 0, function* () {
     return result;
 });
 const updateCow = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
-    const checkSellerId = yield user_model_1.default.findById(payload.sellerId);
-    if (!checkSellerId) {
-        throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'No user is matching with given sellerId!!!');
+    if (payload.sellerId) {
+        const checkSellerId = yield user_model_1.default.findById(payload.sellerId);
+        if (!checkSellerId) {
+            throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'No user is matching with given id!!!');
+        }
     }
     const result = yield cow_model_1.default.findOneAndUpdate({ _id: id }, payload, {
         new: true,

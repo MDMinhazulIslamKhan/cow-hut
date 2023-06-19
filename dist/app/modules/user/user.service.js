@@ -36,6 +36,10 @@ const getSingleUser = (id) => __awaiter(void 0, void 0, void 0, function* () {
     return result;
 });
 const updateUser = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const checkNumber = yield user_model_1.default.findOne({ phoneNumber: payload.phoneNumber });
+    if (checkNumber) {
+        throw new ApiError_1.default(http_status_1.default.CONFLICT, 'Already used this number!!!');
+    }
     const result = yield user_model_1.default.findOneAndUpdate({ _id: id }, payload, {
         new: true,
     });

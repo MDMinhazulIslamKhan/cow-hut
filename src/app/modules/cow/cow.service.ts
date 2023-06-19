@@ -30,9 +30,19 @@ const getAllCows = async (
   filters: ICowFilters,
   paginationOptions: IPaginationOptions
 ): Promise<IGenericResponse<ICow[]>> => {
-  const { searchTerm, ...filtersData } = filters;
+  const {
+    searchTerm,
+    minPrice = 0,
+    maxPrice = Infinity,
+    ...filtersData
+  } = filters;
 
   const andConditions = [];
+
+  // for filter price
+  andConditions.push({
+    $and: [{ price: { $gte: minPrice } }, { price: { $lte: maxPrice } }],
+  });
 
   // for filter data
   if (searchTerm) {
@@ -90,12 +100,14 @@ const updateCow = async (
   id: string,
   payload: Partial<ICow>
 ): Promise<ICow | null> => {
-  const checkSellerId = await User.findById(payload.sellerId);
-  if (!checkSellerId) {
-    throw new ApiError(
-      httpStatus.BAD_REQUEST,
-      'No user is matching with given sellerId!!!'
-    );
+  if (payload.sellerId) {
+    const checkSellerId = await User.findById(payload.sellerId);
+    if (!checkSellerId) {
+      throw new ApiError(
+        httpStatus.BAD_REQUEST,
+        'No user is matching with given id!!!'
+      );
+    }
   }
   const result = await Cow.findOneAndUpdate({ _id: id }, payload, {
     new: true,
