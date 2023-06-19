@@ -21,7 +21,7 @@ app.use('/api/v1', ApplicationRouters);
 app.use(globalErrorHandler);
 
 // No routes
-app.use((req, res) => {
+app.use((req: Request, res: Response) => {
   return res.status(404).json({
     success: false,
     message: 'Not found.',
