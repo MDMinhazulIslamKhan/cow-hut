@@ -18,7 +18,6 @@ const loginUser = async (payload: ILoginUser): Promise<ILoginUserResponse> => {
   if (!isUserExist) {
     throw new ApiError(httpStatus.NOT_FOUND, "User doesn't exist.");
   }
-  console.log(isUserExist);
 
   if (!(await User.isPasswordMatch(password, isUserExist.password))) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Password is incorrect.');
