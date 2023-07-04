@@ -31,7 +31,21 @@ const getOrders: RequestHandler = catchAsync(
   }
 );
 
+const getSingleOrder = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id;
+
+  const result = await OrderService.getSingleOrder(id);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Cow retrieved Successfully',
+    data: result,
+  });
+});
+
 export const OrderController = {
   createOrder,
   getOrders,
+  getSingleOrder,
 };

@@ -1,8 +1,10 @@
+import bcrypt from 'bcrypt';
 import { Schema, model } from 'mongoose';
 import { IUser, UserModel } from './user.interface';
 import { userRoles } from './user.constant';
+import config from '../../../config';
 
-const userSchema = new Schema<IUser>(
+const userSchema = new Schema<IUser, UserModel>(
   {
     phoneNumber: {
       type: String,
@@ -17,6 +19,7 @@ const userSchema = new Schema<IUser>(
     password: {
       type: String,
       required: true,
+      select: 0,
     },
     name: {
       firstName: {
@@ -34,11 +37,9 @@ const userSchema = new Schema<IUser>(
     },
     budget: {
       type: Number,
-      required: true,
     },
     income: {
       type: Number,
-      required: true,
     },
   },
   {
@@ -46,7 +47,31 @@ const userSchema = new Schema<IUser>(
   }
 );
 
-userSchema.index({ phoneNumber: 1 }, { unique: true });
+/*---        static method below            ---*/
+userSchema.statics.isUserExist = async function (
+  phoneNumber: string
+): Promise<Pick<IUser, 'phoneNumber' | 'password' | 'role'> | null> {
+  return await User.findOne(
+    { phoneNumber },
+    { phoneNumber: 1, password: 1, role: 1 }
+  );
+};
+
+userSchema.statics.isPasswordMatch = async function (
+  givenPassword: string,
+  savePassword: string
+): Promise<boolean> {
+  return await bcrypt.compare(givenPassword, savePassword);
+};
+
+userSchema.pre('save', async function (next) {
+  // hashing password
+  this.password = await bcrypt.hash(
+    this.password,
+    Number(config.bcrypt_salt_rounds)
+  );
+  next();
+});
 
 const User = model<IUser, UserModel>('User', userSchema);
 

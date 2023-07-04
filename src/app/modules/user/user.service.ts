@@ -2,6 +2,9 @@ import httpStatus from 'http-status';
 import ApiError from '../../../errors/ApiError';
 import { IUser } from './user.interface';
 import User from './user.model';
+import { jwtHelpers } from '../../../helpers/jwtHelpers';
+import { Secret } from 'jsonwebtoken';
+import config from '../../../config';
 
 const createUser = async (user: IUser): Promise<IUser | null> => {
   const checkNumber = await User.findOne({ phoneNumber: user.phoneNumber });
@@ -18,6 +21,41 @@ const createUser = async (user: IUser): Promise<IUser | null> => {
 
 const getAllUsers = async (): Promise<IUser[]> => {
   const result = await User.find();
+  return result;
+};
+
+const getMyProfile = async (token: string): Promise<IUser | null> => {
+  const userInfo = jwtHelpers.verifyToken(token, config.jwt.secret as Secret);
+
+  const result = await User.findOne({ phoneNumber: userInfo.phoneNumber });
+  return result;
+};
+
+const updateUserByAdmin = async (
+  token: string,
+  payload: Partial<IUser>
+): Promise<IUser | null> => {
+  const userInfo = jwtHelpers.verifyToken(token, config.jwt.secret as Secret);
+
+  if (payload.phoneNumber && payload.role) {
+    throw new ApiError(
+      httpStatus.CONFLICT,
+      "Phone number and role can't changed!!!"
+    );
+  }
+
+  const result = await User.findOneAndUpdate(
+    { phoneNumber: userInfo.phoneNumber },
+    payload,
+    {
+      new: true,
+    }
+  );
+  return result;
+};
+
+const deleteUser = async (id: string): Promise<IUser | null> => {
+  const result = await User.findByIdAndDelete(id);
   return result;
 };
 
@@ -41,15 +79,12 @@ const updateUser = async (
   return result;
 };
 
-const deleteUser = async (id: string): Promise<IUser | null> => {
-  const result = await User.findByIdAndDelete(id);
-  return result;
-};
-
 export const UserService = {
   createUser,
   getAllUsers,
   getSingleUser,
+  getMyProfile,
+  updateUserByAdmin,
   updateUser,
   deleteUser,
 };

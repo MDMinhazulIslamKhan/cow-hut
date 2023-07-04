@@ -1,3 +1,3 @@
-export type Role = 'seller' | 'buyer';
+export type Role = 'seller' | 'buyer' | 'admin';
 
-export const userRoles: Role[] = ['seller', 'buyer'];
+export const userRoles: Role[] = ['seller', 'buyer', 'admin'];

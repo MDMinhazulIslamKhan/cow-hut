@@ -30,7 +30,7 @@ const createOrder = async (
   if (!passwordMatch) {
     throw new ApiError(httpStatus.UNAUTHORIZED, "Password didn't match!!!");
   }
-  if (existingCow.price >= existingUser.budget) {
+  if (existingUser?.budget && existingCow.price >= existingUser?.budget) {
     throw new ApiError(
       httpStatus.FORBIDDEN,
       "You haven't enough money to bye this cow!!!"
@@ -61,8 +61,12 @@ const getOrders = async (): Promise<IOrder[] | null> => {
   const result = await Order.find();
   return result;
 };
-
+const getSingleOrder = async (id: string): Promise<IOrder | null> => {
+  const result = await Order.findById(id);
+  return result;
+};
 export const OrderService = {
   createOrder,
   getOrders,
+  getSingleOrder,
 };

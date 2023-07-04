@@ -1,11 +1,12 @@
 import { z } from 'zod';
+import { userRoles } from './user.constant';
 
 const createUserZodSchema = z.object({
   body: z.object({
     password: z.string({
       required_error: 'password is required',
     }),
-    role: z.enum(['seller', 'buyer'], {
+    role: z.enum([...userRoles] as [string, ...string[]], {
       required_error: 'role is required',
     }),
     name: z.object({
@@ -30,7 +31,7 @@ const createUserZodSchema = z.object({
 const updateUserZodSchema = z.object({
   body: z.object({
     password: z.string().optional(),
-    role: z.enum(['seller', 'buyer']).optional(),
+    role: z.enum([...userRoles] as [string, ...string[]]).optional(),
     name: z
       .object({
         firstName: z.string({

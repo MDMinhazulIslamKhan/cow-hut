@@ -5,13 +5,11 @@ import catchAsync from '../../../shared/catchAsync';
 import sendResponse from '../../../shared/sendResponse';
 import httpStatus from 'http-status';
 import { IUser } from './user.interface';
+import ApiError from '../../../errors/ApiError';
 
 const createUser: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
     const user = req.body;
-
-    // password hashing
-    user.password = await bcrypt.hash(user.password, 10);
 
     const result = await UserService.createUser(user);
 
@@ -35,10 +33,12 @@ const getAllUsers = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const getSingleUser = catchAsync(async (req: Request, res: Response) => {
-  const id = req.params.id;
-
-  const result = await UserService.getSingleUser(id);
+const myProfile = catchAsync(async (req: Request, res: Response) => {
+  const token = req.headers.authorization;
+  if (!token) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'You are not authorized');
+  }
+  const result = await UserService.getMyProfile(token);
 
   sendResponse<IUser>(res, {
     statusCode: httpStatus.OK,
@@ -48,6 +48,27 @@ const getSingleUser = catchAsync(async (req: Request, res: Response) => {
   });
 });
 const updateUser = catchAsync(async (req: Request, res: Response) => {
+  const token = req.headers.authorization;
+  if (!token) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'You are not authorized');
+  }
+  const user = req.body;
+
+  // password hashing
+  if (user.password) {
+    user.password = await bcrypt.hash(user.password, 10);
+  }
+  const result = await UserService.updateUserByAdmin(token, user);
+
+  sendResponse<IUser>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Users updated Successfully',
+    data: result,
+  });
+});
+
+const updateUserByAdmin = catchAsync(async (req: Request, res: Response) => {
   const id = req.params.id;
   const user = req.body;
 
@@ -78,10 +99,25 @@ const deleteUser = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+
+const getSingleUser = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id;
+
+  const result = await UserService.getSingleUser(id);
+
+  sendResponse<IUser>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Users retrieved Successfully',
+    data: result,
+  });
+});
 export const UserController = {
   createUser,
+  myProfile,
   getAllUsers,
-  getSingleUser,
   updateUser,
+  updateUserByAdmin,
   deleteUser,
+  getSingleUser,
 };

@@ -2,10 +2,14 @@ import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
 import globalErrorHandler from './app/middleware/globalErrorHandler';
 import { ApplicationRouters } from './app/routes';
+import cookieParser from 'cookie-parser';
 
 const app: Application = express();
 
 app.use(cors());
+
+// cookie parser
+app.use(cookieParser());
 
 // parser
 app.use(express.json());
