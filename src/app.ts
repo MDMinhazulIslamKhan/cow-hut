@@ -19,7 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/', (req: Request, res: Response) => {
   return res.status(200).json({
     success: true,
-    message: 'Working Successfully',
+    message: 'Welcome in digital cow hut.',
   });
 });
 

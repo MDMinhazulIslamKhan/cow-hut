@@ -19,7 +19,7 @@ app.use(express_1.default.urlencoded({ extended: true }));
 app.get('/', (req, res) => {
     return res.status(200).json({
         success: true,
-        message: 'Working Successfully',
+        message: 'Welcome in digital cow hut.',
     });
 });
 app.use('/api/v1', routes_1.ApplicationRouters);

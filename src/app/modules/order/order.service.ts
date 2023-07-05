@@ -20,7 +20,10 @@ const createOrder = async (
   const existingUser = await User.isUserExist(userInfo.phoneNumber);
 
   if (!existingUser) {
-    throw new ApiError(httpStatus.CONFLICT, 'No user with this phon number!!!');
+    throw new ApiError(
+      httpStatus.CONFLICT,
+      'User is deleted, create new account!!!'
+    );
   }
   const isPasswordMatch = await User.isPasswordMatch(
     password,
@@ -111,21 +114,29 @@ const getOrders = async (): Promise<IOrder[] | null> => {
   return result;
 };
 const getSingleOrder = async (id: string, token: string) => {
-  const userInfo = (await jwt.verify(
+  const user = (await jwt.verify(
     token,
     config.jwt.secret as Secret
   )) as JwtPayload;
-  const buyerInfo = await User.findOne({ phoneNumber: userInfo.phoneNumber });
+  const userInfo = await User.findOne({
+    phoneNumber: user.phoneNumber,
+  });
 
-  const result = await Order.findById(id).populate(['cow', 'buyer']);
+  const orderResult = await Order.findById(id).populate(['cow', 'buyer']);
+  if (!orderResult) {
+    throw new ApiError(httpStatus.CONFLICT, 'No order with this id!!!');
+  }
+
+  const cow = await Cow.findById(orderResult.cow);
 
   if (
-    buyerInfo?.role === 'buyer' &&
-    buyerInfo.id !== result?.buyer.id.toString()
+    userInfo?.role !== 'admin' &&
+    userInfo?.id !== orderResult?.buyer.id.toString() &&
+    userInfo?.id !== cow?.sellerId.toString()
   ) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Unauthorized!!!');
   }
-  return result;
+  return orderResult;
 };
 
 export const OrderService = {

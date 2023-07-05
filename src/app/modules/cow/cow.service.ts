@@ -23,7 +23,7 @@ const createCow = async (cow: ICow): Promise<ICow | null> => {
   }
   const createdCow = (await Cow.create(cow)).populate('sellerId');
   if (!createdCow) {
-    throw new ApiError(400, 'Failed to create user!');
+    throw new ApiError(400, 'Failed to create cow!');
   }
   return createdCow;
 };

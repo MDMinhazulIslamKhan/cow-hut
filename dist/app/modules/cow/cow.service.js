@@ -39,7 +39,7 @@ const createCow = (cow) => __awaiter(void 0, void 0, void 0, function* () {
     }
     const createdCow = (yield cow_model_1.default.create(cow)).populate('sellerId');
     if (!createdCow) {
-        throw new ApiError_1.default(400, 'Failed to create user!');
+        throw new ApiError_1.default(400, 'Failed to create cow!');
     }
     return createdCow;
 });

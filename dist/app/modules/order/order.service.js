@@ -25,7 +25,7 @@ const createOrder = (token, password, cow) => __awaiter(void 0, void 0, void 0, 
     const userInfo = (yield jsonwebtoken_1.default.verify(token, config_1.default.jwt.secret));
     const existingUser = yield user_model_1.default.isUserExist(userInfo.phoneNumber);
     if (!existingUser) {
-        throw new ApiError_1.default(http_status_1.default.CONFLICT, 'No user with this phon number!!!');
+        throw new ApiError_1.default(http_status_1.default.CONFLICT, 'User is deleted, create new account!!!');
     }
     const isPasswordMatch = yield user_model_1.default.isPasswordMatch(password, existingUser.password);
     if (!isPasswordMatch) {
@@ -85,14 +85,21 @@ const getOrders = () => __awaiter(void 0, void 0, void 0, function* () {
     return result;
 });
 const getSingleOrder = (id, token) => __awaiter(void 0, void 0, void 0, function* () {
-    const userInfo = (yield jsonwebtoken_1.default.verify(token, config_1.default.jwt.secret));
-    const buyerInfo = yield user_model_1.default.findOne({ phoneNumber: userInfo.phoneNumber });
-    const result = yield order_model_1.default.findById(id).populate(['cow', 'buyer']);
-    if ((buyerInfo === null || buyerInfo === void 0 ? void 0 : buyerInfo.role) === 'buyer' &&
-        buyerInfo.id !== (result === null || result === void 0 ? void 0 : result.buyer.id.toString())) {
+    const user = (yield jsonwebtoken_1.default.verify(token, config_1.default.jwt.secret));
+    const userInfo = yield user_model_1.default.findOne({
+        phoneNumber: user.phoneNumber,
+    });
+    const orderResult = yield order_model_1.default.findById(id).populate(['cow', 'buyer']);
+    if (!orderResult) {
+        throw new ApiError_1.default(http_status_1.default.CONFLICT, 'No order with this id!!!');
+    }
+    const cow = yield cow_model_1.default.findById(orderResult.cow);
+    if ((userInfo === null || userInfo === void 0 ? void 0 : userInfo.role) !== 'admin' &&
+        (userInfo === null || userInfo === void 0 ? void 0 : userInfo.id) !== (orderResult === null || orderResult === void 0 ? void 0 : orderResult.buyer.id.toString()) &&
+        (userInfo === null || userInfo === void 0 ? void 0 : userInfo.id) !== (cow === null || cow === void 0 ? void 0 : cow.sellerId.toString())) {
         throw new ApiError_1.default(http_status_1.default.UNAUTHORIZED, 'Unauthorized!!!');
     }
-    return result;
+    return orderResult;
 });
 exports.OrderService = {
     createOrder,
