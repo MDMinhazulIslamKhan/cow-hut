@@ -1,4 +1,4 @@
-# **Assignment 4 : Cow Hut Admin With Auth**
+# **Cow Hut Admin With Auth**
 
 ## **Live Link: https://cow-hut-dun.vercel.app**
 
