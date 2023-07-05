@@ -1,5 +1,6 @@
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Breed, Category, Label, Location } from './cow.constant';
+import { IUser } from '../user/user.interface';
 
 export type ICow = {
   name: string;
@@ -10,7 +11,7 @@ export type ICow = {
   weight: number;
   label: Label;
   category: Category;
-  sellerId: string;
+  sellerId: IUser & Types.ObjectId;
 };
 export type CowModel = Model<ICow, Record<string, unknown>>;
 

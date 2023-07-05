@@ -1,7 +1,7 @@
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 
 export type IOrder = {
-  cow: string;
-  buyer: string;
+  cow: Types.ObjectId;
+  buyer: Types.ObjectId;
 };
 export type OrderModel = Model<IOrder, Record<string, unknown>>;

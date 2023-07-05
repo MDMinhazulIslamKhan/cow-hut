@@ -14,19 +14,13 @@ router.get(
   UserController.myProfile
 );
 
-// update profile
+// update own profile by user
 router.patch(
   '/my-profile',
   validateRequest(UserValidation.updateUserZodSchema),
-  auth(ENUM_USER_ROLE.BUYER, ENUM_USER_ROLE.SELLER),
+  auth(ENUM_USER_ROLE.BUYER, ENUM_USER_ROLE.SELLER, ENUM_USER_ROLE.ADMIN),
   UserController.updateUser
 );
-
-// all user
-router.get('/', auth(ENUM_USER_ROLE.ADMIN), UserController.getAllUsers);
-
-// single user
-router.get('/:id', auth(ENUM_USER_ROLE.ADMIN), UserController.getSingleUser);
 
 // update user by admin
 router.patch(
@@ -35,6 +29,12 @@ router.patch(
   auth(ENUM_USER_ROLE.ADMIN),
   UserController.updateUserByAdmin
 );
+
+// all user
+router.get('/', auth(ENUM_USER_ROLE.ADMIN), UserController.getAllUsers);
+
+// single user
+router.get('/:id', auth(ENUM_USER_ROLE.ADMIN), UserController.getSingleUser);
 
 // delete user
 router.delete('/:id', auth(ENUM_USER_ROLE.ADMIN), UserController.deleteUser);

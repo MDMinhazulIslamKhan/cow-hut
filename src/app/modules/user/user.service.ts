@@ -16,7 +16,8 @@ const createUser = async (user: IUser): Promise<IUser | null> => {
   if (!createdUser) {
     throw new ApiError(400, 'Failed to create user!');
   }
-  return createdUser;
+  const result = await User.findById(createdUser._id);
+  return result;
 };
 
 const getAllUsers = async (): Promise<IUser[]> => {
@@ -28,10 +29,23 @@ const getMyProfile = async (token: string): Promise<IUser | null> => {
   const userInfo = jwtHelpers.verifyToken(token, config.jwt.secret as Secret);
 
   const result = await User.findOne({ phoneNumber: userInfo.phoneNumber });
+  if (!result) {
+    throw new ApiError(httpStatus.CONFLICT, 'Your profile is deleted!!!');
+  }
   return result;
 };
 
-const updateUserByAdmin = async (
+const deleteUser = async (id: string): Promise<IUser | null> => {
+  const result = await User.findByIdAndDelete(id);
+  return result;
+};
+
+const getSingleUser = async (id: string): Promise<IUser | null> => {
+  const result = await User.findById(id);
+  return result;
+};
+
+const updateUser = async (
   token: string,
   payload: Partial<IUser>
 ): Promise<IUser | null> => {
@@ -53,18 +67,7 @@ const updateUserByAdmin = async (
   );
   return result;
 };
-
-const deleteUser = async (id: string): Promise<IUser | null> => {
-  const result = await User.findByIdAndDelete(id);
-  return result;
-};
-
-const getSingleUser = async (id: string): Promise<IUser | null> => {
-  const result = await User.findById(id);
-  return result;
-};
-
-const updateUser = async (
+const updateUserByAdmin = async (
   id: string,
   payload: Partial<IUser>
 ): Promise<IUser | null> => {

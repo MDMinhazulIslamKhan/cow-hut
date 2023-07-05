@@ -11,11 +11,11 @@ const createAdmin = async (admin: IUser): Promise<IUser | null> => {
   }
   admin.role = 'admin';
   const createdAdmin = await User.create(admin);
+  const result = await User.findById(createdAdmin._id);
   if (!createdAdmin) {
     throw new ApiError(400, 'Failed to create admin!');
   }
-
-  return createdAdmin;
+  return result;
 };
 export const AdminService = {
   createAdmin,

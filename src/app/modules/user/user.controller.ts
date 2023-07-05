@@ -5,7 +5,6 @@ import catchAsync from '../../../shared/catchAsync';
 import sendResponse from '../../../shared/sendResponse';
 import httpStatus from 'http-status';
 import { IUser } from './user.interface';
-import ApiError from '../../../errors/ApiError';
 
 const createUser: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
@@ -34,10 +33,8 @@ const getAllUsers = catchAsync(async (req: Request, res: Response) => {
 });
 
 const myProfile = catchAsync(async (req: Request, res: Response) => {
-  const token = req.headers.authorization;
-  if (!token) {
-    throw new ApiError(httpStatus.UNAUTHORIZED, 'You are not authorized');
-  }
+  const token = req?.headers?.authorization as string;
+
   const result = await UserService.getMyProfile(token);
 
   sendResponse<IUser>(res, {
@@ -48,17 +45,14 @@ const myProfile = catchAsync(async (req: Request, res: Response) => {
   });
 });
 const updateUser = catchAsync(async (req: Request, res: Response) => {
-  const token = req.headers.authorization;
-  if (!token) {
-    throw new ApiError(httpStatus.UNAUTHORIZED, 'You are not authorized');
-  }
+  const token = req?.headers?.authorization as string;
   const user = req.body;
 
   // password hashing
   if (user.password) {
     user.password = await bcrypt.hash(user.password, 10);
   }
-  const result = await UserService.updateUserByAdmin(token, user);
+  const result = await UserService.updateUser(token, user);
 
   sendResponse<IUser>(res, {
     statusCode: httpStatus.OK,
@@ -77,7 +71,7 @@ const updateUserByAdmin = catchAsync(async (req: Request, res: Response) => {
     user.password = await bcrypt.hash(user.password, 10);
   }
 
-  const result = await UserService.updateUser(id, user);
+  const result = await UserService.updateUserByAdmin(id, user);
 
   sendResponse<IUser>(res, {
     statusCode: httpStatus.OK,

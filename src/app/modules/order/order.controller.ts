@@ -6,9 +6,10 @@ import { OrderService } from './order.service';
 
 const createOrder: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
-    const { phoneNumber, password, cow } = req.body;
+    const { password, cow } = req.body;
+    const token = req?.headers?.authorization as string;
 
-    const result = await OrderService.createOrder(phoneNumber, password, cow);
+    const result = await OrderService.createOrder(token, password, cow);
 
     sendResponse(res, {
       statusCode: httpStatus.OK,
@@ -33,8 +34,9 @@ const getOrders: RequestHandler = catchAsync(
 
 const getSingleOrder = catchAsync(async (req: Request, res: Response) => {
   const id = req.params.id;
+  const token = req?.headers?.authorization as string;
 
-  const result = await OrderService.getSingleOrder(id);
+  const result = await OrderService.getSingleOrder(id, token);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

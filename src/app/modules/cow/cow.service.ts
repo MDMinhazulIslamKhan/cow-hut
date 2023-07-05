@@ -1,4 +1,5 @@
 import httpStatus from 'http-status';
+import jwt, { JwtPayload, Secret } from 'jsonwebtoken';
 import User from '../user/user.model';
 import { ICow, ICowFilters } from './cow.interface';
 import ApiError from '../../../errors/ApiError';
@@ -10,6 +11,7 @@ import {
 import { cowFilterableField } from './cow.constant';
 import { calculatePagination } from '../../../helpers/paginationHelper';
 import { SortOrder } from 'mongoose';
+import config from '../../../config';
 
 const createCow = async (cow: ICow): Promise<ICow | null> => {
   const checkSellerId = await User.findById(cow.sellerId);
@@ -19,7 +21,7 @@ const createCow = async (cow: ICow): Promise<ICow | null> => {
       'No user is matching with given sellerId!!!'
     );
   }
-  const createdCow = await Cow.create(cow);
+  const createdCow = (await Cow.create(cow)).populate('sellerId');
   if (!createdCow) {
     throw new ApiError(400, 'Failed to create user!');
   }
@@ -77,7 +79,8 @@ const getAllCows = async (
   const result = await Cow.find(query)
     .sort(sortConditions)
     .skip(skip)
-    .limit(limit);
+    .limit(limit)
+    .populate('sellerId');
 
   const count = await Cow.countDocuments();
 
@@ -92,30 +95,44 @@ const getAllCows = async (
 };
 
 const getSingleCow = async (id: string): Promise<ICow | null> => {
-  const result = await Cow.findById(id);
+  const result = await Cow.findById(id).populate('sellerId');
   return result;
 };
 
 const updateCow = async (
   id: string,
-  payload: Partial<ICow>
+  payload: Partial<ICow>,
+  token: string
 ): Promise<ICow | null> => {
   if (payload.sellerId) {
-    const checkSellerId = await User.findById(payload.sellerId);
-    if (!checkSellerId) {
-      throw new ApiError(
-        httpStatus.BAD_REQUEST,
-        'No user is matching with given id!!!'
-      );
-    }
+    throw new ApiError(httpStatus.CONFLICT, "Can't change sellerId!!!");
   }
+  const userInfo = (await jwt.verify(
+    token,
+    config.jwt.secret as Secret
+  )) as JwtPayload;
+
+  const cow = await Cow.findById(id).populate('sellerId');
+  if (userInfo.phoneNumber !== cow?.sellerId?.phoneNumber) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'This is not your cow!!!');
+  }
+
   const result = await Cow.findOneAndUpdate({ _id: id }, payload, {
     new: true,
-  });
+  }).populate('sellerId');
   return result;
 };
 
-const deleteCow = async (id: string): Promise<ICow | null> => {
+const deleteCow = async (id: string, token: string): Promise<ICow | null> => {
+  const userInfo = (await jwt.verify(
+    token,
+    config.jwt.secret as Secret
+  )) as JwtPayload;
+
+  const cow = await Cow.findById(id).populate('sellerId');
+  if (userInfo.phoneNumber !== cow?.sellerId?.phoneNumber) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'This is not your cow!!!');
+  }
   const result = await Cow.findByIdAndDelete(id);
   return result;
 };

@@ -4,12 +4,12 @@ import { IOrder, OrderModel } from './order.interface';
 const orderSchema = new Schema<IOrder>(
   {
     cow: {
-      type: String,
-      required: true,
+      type: Schema.Types.ObjectId,
+      ref: 'Cow',
     },
     buyer: {
-      type: String,
-      required: true,
+      type: Schema.Types.ObjectId,
+      ref: 'User',
     },
   },
   {
