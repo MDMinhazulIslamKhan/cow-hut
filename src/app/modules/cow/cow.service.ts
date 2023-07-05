@@ -82,7 +82,7 @@ const getAllCows = async (
     .limit(limit)
     .populate('sellerId');
 
-  const count = await Cow.countDocuments();
+  const count = await Cow.countDocuments(query);
 
   return {
     meta: {

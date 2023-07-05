@@ -78,7 +78,7 @@ const getAllCows = (filters, paginationOptions) => __awaiter(void 0, void 0, voi
         .skip(skip)
         .limit(limit)
         .populate('sellerId');
-    const count = yield cow_model_1.default.countDocuments();
+    const count = yield cow_model_1.default.countDocuments(query);
     return {
         meta: {
             page,
