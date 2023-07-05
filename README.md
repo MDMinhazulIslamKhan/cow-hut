@@ -1,4 +1,4 @@
-# **Cow Hut Admin With Auth**
+# **Cow Hut Auth**
 
 ## **Live Link: https://cow-hut-dun.vercel.app**
 
