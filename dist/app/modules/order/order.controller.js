@@ -18,8 +18,10 @@ const sendResponse_1 = __importDefault(require("../../../shared/sendResponse"));
 const http_status_1 = __importDefault(require("http-status"));
 const order_service_1 = require("./order.service");
 const createOrder = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { phoneNumber, password, cow } = req.body;
-    const result = yield order_service_1.OrderService.createOrder(phoneNumber, password, cow);
+    var _a;
+    const { password, cow } = req.body;
+    const token = (_a = req === null || req === void 0 ? void 0 : req.headers) === null || _a === void 0 ? void 0 : _a.authorization;
+    const result = yield order_service_1.OrderService.createOrder(token, password, cow);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
@@ -37,8 +39,10 @@ const getOrders = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void
     });
 }));
 const getSingleOrder = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _b;
     const id = req.params.id;
-    const result = yield order_service_1.OrderService.getSingleOrder(id);
+    const token = (_b = req === null || req === void 0 ? void 0 : req.headers) === null || _b === void 0 ? void 0 : _b.authorization;
+    const result = yield order_service_1.OrderService.getSingleOrder(id, token);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,

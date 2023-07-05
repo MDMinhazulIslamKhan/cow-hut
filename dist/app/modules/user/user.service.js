@@ -27,7 +27,8 @@ const createUser = (user) => __awaiter(void 0, void 0, void 0, function* () {
     if (!createdUser) {
         throw new ApiError_1.default(400, 'Failed to create user!');
     }
-    return createdUser;
+    const result = yield user_model_1.default.findById(createdUser._id);
+    return result;
 });
 const getAllUsers = () => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield user_model_1.default.find();
@@ -36,16 +37,9 @@ const getAllUsers = () => __awaiter(void 0, void 0, void 0, function* () {
 const getMyProfile = (token) => __awaiter(void 0, void 0, void 0, function* () {
     const userInfo = jwtHelpers_1.jwtHelpers.verifyToken(token, config_1.default.jwt.secret);
     const result = yield user_model_1.default.findOne({ phoneNumber: userInfo.phoneNumber });
-    return result;
-});
-const updateUserByAdmin = (token, payload) => __awaiter(void 0, void 0, void 0, function* () {
-    const userInfo = jwtHelpers_1.jwtHelpers.verifyToken(token, config_1.default.jwt.secret);
-    if (payload.phoneNumber && payload.role) {
-        throw new ApiError_1.default(http_status_1.default.CONFLICT, "Phone number and role can't changed!!!");
+    if (!result) {
+        throw new ApiError_1.default(http_status_1.default.CONFLICT, 'Your profile is deleted!!!');
     }
-    const result = yield user_model_1.default.findOneAndUpdate({ phoneNumber: userInfo.phoneNumber }, payload, {
-        new: true,
-    });
     return result;
 });
 const deleteUser = (id) => __awaiter(void 0, void 0, void 0, function* () {
@@ -56,7 +50,17 @@ const getSingleUser = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield user_model_1.default.findById(id);
     return result;
 });
-const updateUser = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
+const updateUser = (token, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const userInfo = jwtHelpers_1.jwtHelpers.verifyToken(token, config_1.default.jwt.secret);
+    if (payload.phoneNumber && payload.role) {
+        throw new ApiError_1.default(http_status_1.default.CONFLICT, "Phone number and role can't changed!!!");
+    }
+    const result = yield user_model_1.default.findOneAndUpdate({ phoneNumber: userInfo.phoneNumber }, payload, {
+        new: true,
+    });
+    return result;
+});
+const updateUserByAdmin = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
     const checkNumber = yield user_model_1.default.findOne({ phoneNumber: payload.phoneNumber });
     if (checkNumber) {
         throw new ApiError_1.default(http_status_1.default.CONFLICT, 'Already used this number!!!');

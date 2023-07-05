@@ -13,47 +13,85 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderService = void 0;
-const bcrypt_1 = __importDefault(require("bcrypt"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const http_status_1 = __importDefault(require("http-status"));
 const ApiError_1 = __importDefault(require("../../../errors/ApiError"));
 const user_model_1 = __importDefault(require("../user/user.model"));
 const order_model_1 = __importDefault(require("./order.model"));
 const cow_model_1 = __importDefault(require("../cow/cow.model"));
-const createOrder = (phoneNumber, password, cow) => __awaiter(void 0, void 0, void 0, function* () {
-    const existingUser = yield user_model_1.default.findOne({ phoneNumber });
+const config_1 = __importDefault(require("../../../config"));
+const mongoose_1 = __importDefault(require("mongoose"));
+const createOrder = (token, password, cow) => __awaiter(void 0, void 0, void 0, function* () {
+    const userInfo = (yield jsonwebtoken_1.default.verify(token, config_1.default.jwt.secret));
+    const existingUser = yield user_model_1.default.isUserExist(userInfo.phoneNumber);
     if (!existingUser) {
         throw new ApiError_1.default(http_status_1.default.CONFLICT, 'No user with this phon number!!!');
+    }
+    const isPasswordMatch = yield user_model_1.default.isPasswordMatch(password, existingUser.password);
+    if (!isPasswordMatch) {
+        throw new ApiError_1.default(http_status_1.default.UNAUTHORIZED, "Password didn't match!!!");
     }
     const existingCow = yield cow_model_1.default.findById(cow);
     if (!existingCow) {
         throw new ApiError_1.default(http_status_1.default.CONFLICT, 'There has no cow  with this cowId!!!');
     }
-    // password matching
-    const passwordMatch = yield bcrypt_1.default.compare(password, existingUser.password);
-    if (!passwordMatch) {
-        throw new ApiError_1.default(http_status_1.default.UNAUTHORIZED, "Password didn't match!!!");
-    }
-    if ((existingUser === null || existingUser === void 0 ? void 0 : existingUser.budget) && existingCow.price >= (existingUser === null || existingUser === void 0 ? void 0 : existingUser.budget)) {
+    const user = yield user_model_1.default.findById(existingUser.id);
+    if ((user === null || user === void 0 ? void 0 : user.budget) && existingCow.price >= (user === null || user === void 0 ? void 0 : user.budget)) {
         throw new ApiError_1.default(http_status_1.default.FORBIDDEN, "You haven't enough money to bye this cow!!!");
     }
     if (existingCow.label === 'sold out') {
         throw new ApiError_1.default(http_status_1.default.FORBIDDEN, 'Cow is already sold!!!');
     }
-    const createdOrder = yield order_model_1.default.create({ cow, buyer: existingUser.id });
-    yield cow_model_1.default.findOneAndUpdate({ _id: cow }, { label: 'sold out' });
-    yield user_model_1.default.findOneAndUpdate({ _id: existingCow.sellerId }, { $inc: { income: existingCow.price } });
-    yield user_model_1.default.findOneAndUpdate({ _id: existingUser.id }, { $inc: { budget: -existingCow.price } });
-    if (!createdOrder) {
-        throw new ApiError_1.default(400, 'Failed to create order!');
+    const session = yield mongoose_1.default.startSession();
+    let createdOrder;
+    try {
+        session.startTransaction();
+        yield cow_model_1.default.findOneAndUpdate({ _id: cow }, { label: 'sold out' }, {
+            session,
+        });
+        yield user_model_1.default.findOneAndUpdate({ _id: existingCow.sellerId }, { $inc: { income: existingCow.price } }, {
+            session,
+        });
+        yield user_model_1.default.findOneAndUpdate({ _id: existingUser.id }, { $inc: { budget: -existingCow.price } }, {
+            session,
+        });
+        createdOrder = yield order_model_1.default.create([{ cow, buyer: existingUser.id }], {
+            session,
+        });
+        if (!createdOrder) {
+            throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'Failed to create order!');
+        }
+        yield session.commitTransaction();
+        yield session.endSession();
     }
-    return createdOrder;
+    catch (error) {
+        yield session.abortTransaction();
+        yield session.endSession();
+        throw error;
+    }
+    const order = order_model_1.default.findById(createdOrder[0].id)
+        .populate({
+        path: 'cow',
+        model: 'Cow',
+    })
+        .populate({
+        path: 'buyer',
+        model: 'User',
+    });
+    return order;
 });
 const getOrders = () => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield order_model_1.default.find();
     return result;
 });
-const getSingleOrder = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield order_model_1.default.findById(id);
+const getSingleOrder = (id, token) => __awaiter(void 0, void 0, void 0, function* () {
+    const userInfo = (yield jsonwebtoken_1.default.verify(token, config_1.default.jwt.secret));
+    const buyerInfo = yield user_model_1.default.findOne({ phoneNumber: userInfo.phoneNumber });
+    const result = yield order_model_1.default.findById(id).populate(['cow', 'buyer']);
+    if ((buyerInfo === null || buyerInfo === void 0 ? void 0 : buyerInfo.role) === 'buyer' &&
+        buyerInfo.id !== (result === null || result === void 0 ? void 0 : result.buyer.id.toString())) {
+        throw new ApiError_1.default(http_status_1.default.UNAUTHORIZED, 'Unauthorized!!!');
+    }
     return result;
 });
 exports.OrderService = {

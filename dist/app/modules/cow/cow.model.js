@@ -41,7 +41,8 @@ const cowSchema = new mongoose_1.Schema({
         enum: cow_constant_1.cowCategory,
     },
     sellerId: {
-        type: String,
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: 'User',
         required: true,
     },
 }, {

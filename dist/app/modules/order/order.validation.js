@@ -7,9 +7,6 @@ const createOrderZodSchema = zod_1.z.object({
         cow: zod_1.z.string({
             required_error: 'cow is required',
         }),
-        phoneNumber: zod_1.z.string({
-            required_error: 'phoneNumber is required',
-        }),
         password: zod_1.z.string({
             required_error: 'password is required',
         }),

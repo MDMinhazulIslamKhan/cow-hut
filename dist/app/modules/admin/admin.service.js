@@ -23,10 +23,11 @@ const createAdmin = (admin) => __awaiter(void 0, void 0, void 0, function* () {
     }
     admin.role = 'admin';
     const createdAdmin = yield user_model_1.default.create(admin);
+    const result = yield user_model_1.default.findById(createdAdmin._id);
     if (!createdAdmin) {
         throw new ApiError_1.default(400, 'Failed to create admin!');
     }
-    return createdAdmin;
+    return result;
 });
 exports.AdminService = {
     createAdmin,

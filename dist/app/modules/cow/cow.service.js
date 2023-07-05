@@ -25,17 +25,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CowService = void 0;
 const http_status_1 = __importDefault(require("http-status"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const user_model_1 = __importDefault(require("../user/user.model"));
 const ApiError_1 = __importDefault(require("../../../errors/ApiError"));
 const cow_model_1 = __importDefault(require("./cow.model"));
 const cow_constant_1 = require("./cow.constant");
 const paginationHelper_1 = require("../../../helpers/paginationHelper");
+const config_1 = __importDefault(require("../../../config"));
 const createCow = (cow) => __awaiter(void 0, void 0, void 0, function* () {
     const checkSellerId = yield user_model_1.default.findById(cow.sellerId);
     if (!checkSellerId) {
         throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'No user is matching with given sellerId!!!');
     }
-    const createdCow = yield cow_model_1.default.create(cow);
+    const createdCow = (yield cow_model_1.default.create(cow)).populate('sellerId');
     if (!createdCow) {
         throw new ApiError_1.default(400, 'Failed to create user!');
     }
@@ -74,7 +76,8 @@ const getAllCows = (filters, paginationOptions) => __awaiter(void 0, void 0, voi
     const result = yield cow_model_1.default.find(query)
         .sort(sortConditions)
         .skip(skip)
-        .limit(limit);
+        .limit(limit)
+        .populate('sellerId');
     const count = yield cow_model_1.default.countDocuments();
     return {
         meta: {
@@ -86,22 +89,31 @@ const getAllCows = (filters, paginationOptions) => __awaiter(void 0, void 0, voi
     };
 });
 const getSingleCow = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield cow_model_1.default.findById(id);
+    const result = yield cow_model_1.default.findById(id).populate('sellerId');
     return result;
 });
-const updateCow = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
+const updateCow = (id, payload, token) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     if (payload.sellerId) {
-        const checkSellerId = yield user_model_1.default.findById(payload.sellerId);
-        if (!checkSellerId) {
-            throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'No user is matching with given id!!!');
-        }
+        throw new ApiError_1.default(http_status_1.default.CONFLICT, "Can't change sellerId!!!");
+    }
+    const userInfo = (yield jsonwebtoken_1.default.verify(token, config_1.default.jwt.secret));
+    const cow = yield cow_model_1.default.findById(id).populate('sellerId');
+    if (userInfo.phoneNumber !== ((_a = cow === null || cow === void 0 ? void 0 : cow.sellerId) === null || _a === void 0 ? void 0 : _a.phoneNumber)) {
+        throw new ApiError_1.default(http_status_1.default.UNAUTHORIZED, 'This is not your cow!!!');
     }
     const result = yield cow_model_1.default.findOneAndUpdate({ _id: id }, payload, {
         new: true,
-    });
+    }).populate('sellerId');
     return result;
 });
-const deleteCow = (id) => __awaiter(void 0, void 0, void 0, function* () {
+const deleteCow = (id, token) => __awaiter(void 0, void 0, void 0, function* () {
+    var _b;
+    const userInfo = (yield jsonwebtoken_1.default.verify(token, config_1.default.jwt.secret));
+    const cow = yield cow_model_1.default.findById(id).populate('sellerId');
+    if (userInfo.phoneNumber !== ((_b = cow === null || cow === void 0 ? void 0 : cow.sellerId) === null || _b === void 0 ? void 0 : _b.phoneNumber)) {
+        throw new ApiError_1.default(http_status_1.default.UNAUTHORIZED, 'This is not your cow!!!');
+    }
     const result = yield cow_model_1.default.findByIdAndDelete(id);
     return result;
 });
