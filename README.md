@@ -1,12 +1,12 @@
 # **Cow Hut Auth**
 
-## **Live Link: https://cow-hut-dun.vercel.app**
+## **Live Link: https://cow-hut-auth-mdminhazulislamkhan.vercel.app**
 
 ---
 
 ## Welcome route
 
-- [Website Link](https://cow-hut-dun.vercel.app)
+- [Website Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app)
 
 ---
 
@@ -14,19 +14,19 @@
 
 ### Registration or signup for user (post route)
 
-- /api/v1/auth/signup [Link](https://cow-hut-dun.vercel.app/api/v1/auth/signup)
+- /api/v1/auth/signup [Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/auth/signup)
 
 - Need **name (firstName, lastName), phoneNumber, password, role, address, budget, income** from **req.body**
 
 ### Login (post route)
 
-- /api/v1/auth/login [Link](https://cow-hut-dun.vercel.app/api/v1/auth/login)
+- /api/v1/auth/login [Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/auth/login)
 
 - Need **phoneNumber, password** from **req.body**
 
 ### Refresh token (post route)
 
-- /api/v1/auth/refresh-token [Link](https://cow-hut-dun.vercel.app/api/v1/auth/refresh-token)
+- /api/v1/auth/refresh-token [Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/auth/refresh-token)
 
 - Need **refreshToken** from **req.cookies**
 
@@ -36,13 +36,13 @@
 
 ### Get all users (get route)
 
-- /api/v1/users [Link](https://cow-hut-dun.vercel.app/api/v1/users)
+- /api/v1/users [Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/users)
 
 - Need **jwt** from **req.headers.authorization** => (for admin)
 
 ### Get single users (get route)
 
-- /api/v1/users/:id [Link](https://cow-hut-dun.vercel.app/api/v1/users/:id)
+- /api/v1/users/:id [Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/users/:id)
 
 - Need **id** from **req.params**
 
@@ -50,7 +50,7 @@
 
 ### Delete users (delete route)
 
-- /api/v1/users/:id [Link](https://cow-hut-dun.vercel.app/api/v1/users/:id)
+- /api/v1/users/:id [Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/users/:id)
 
 - Need **id** from **req.params**
 
@@ -58,13 +58,13 @@
 
 ### Get own profile (get route)
 
-- /api/v1/users/my-profile [Link](https://cow-hut-dun.vercel.app/api/v1/users/my-profile)
+- /api/v1/users/my-profile [Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/users/my-profile)
 
 - Need **jwt** from **req.headers.authorization** => (for admin, buyer, seller)
 
 ### Update own profile (patch route)
 
-- /api/v1/users/my-profile [Link](https://cow-hut-dun.vercel.app/api/v1/users/my-profile)
+- /api/v1/users/my-profile [Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/users/my-profile)
 
 - Need **updated profile info** from **req.body**
 
@@ -72,7 +72,7 @@
 
 ### Update profile by admin (patch route)
 
-- /api/v1/users/:id [Link](https://cow-hut-dun.vercel.app/api/v1/users/:id)
+- /api/v1/users/:id [Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/users/:id)
 
 - Need **id** from **req.params**
 
@@ -86,7 +86,7 @@
 
 ### Create cow (post route)
 
-- /api/v1/cows [Link](https://cow-hut-dun.vercel.app/api/v1/cows)
+- /api/v1/cows [Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/cows)
 
 - Need cow **name, age, price,location, breed, weight, label, sellerId** from **req.body**
 
@@ -94,7 +94,7 @@
 
 ### Get all cows (get route)
 
-- /api/v1/cows [Link](https://cow-hut-dun.vercel.app/api/v1/cows)
+- /api/v1/cows [Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/cows)
 
 - Need **jwt** from **req.headers.authorization** => (for admin, buyer, seller)
 
@@ -114,7 +114,7 @@
 
 ### Get single cow (get route)
 
-- /api/v1/cows/:id [Link](https://cow-hut-dun.vercel.app/api/v1/cows/:id)
+- /api/v1/cows/:id [Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/cows/:id)
 
 - Need **id** from **req.params**
 
@@ -122,7 +122,7 @@
 
 ### Update cow (patch route)
 
-- /api/v1/cows/:id [Link](https://cow-hut-dun.vercel.app/api/v1/cows/:id)
+- /api/v1/cows/:id [Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/cows/:id)
 
 - Need **jwt** from **req.headers.authorization** => (for seller)
 
@@ -134,7 +134,7 @@
 
 ### Delete cow (delete route)
 
-- /api/v1/cows/:id [Link](https://cow-hut-dun.vercel.app/api/v1/cows/:id)
+- /api/v1/cows/:id [Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/cows/:id)
 
 - Need **jwt** from **req.headers.authorization** => (for seller)
 
@@ -148,7 +148,7 @@
 
 ### Create order (post route)
 
-- /api/v1/orders [Link](https://cow-hut-dun.vercel.app/api/v1/orders)
+- /api/v1/orders [Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/orders)
 
 - Need **cowId, password** from **req.body**
 
@@ -160,13 +160,13 @@
 
 ### Get all orders history (get route)
 
-- /api/v1/orders/all-orders [Link](https://cow-hut-dun.vercel.app/api/v1/orders/all-orders)
+- /api/v1/orders/all-orders [Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/orders/all-orders)
 
 - Need **jwt** from **req.headers.authorization** => (for admin)
 
 ### Get single order history (get route)
 
-- /api/v1/orders/:id [Link](https://cow-hut-dun.vercel.app/api/v1/orders/:id)
+- /api/v1/orders/:id [Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/orders/:id)
 
 - Need **id** from **req.params**
 
@@ -180,7 +180,7 @@
 
 ### Create admin (post route)
 
-- /api/v1/admins/create-admin [Link](https://cow-hut-dun.vercel.app/api/v1/admins/create-admin)
+- /api/v1/admins/create-admin [Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/admins/create-admin)
 
 - Need **name (firstName, lastName), phoneNumber, password, address** from **req.body**
 
@@ -194,13 +194,13 @@
 
 ## Admin Login Info
 
-- phoneNumber : 01521438469
+- phoneNumber : 01552438465
 
 - password : 12345
 
 ```json
 {
-  "phoneNumber": "01521438469",
+  "phoneNumber": "01552438465",
   "password": "12345"
 }
 ```
