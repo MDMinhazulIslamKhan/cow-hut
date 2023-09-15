@@ -1,4 +1,4 @@
-# **Assignment 4: Cow Hut Admin With Auth**
+# **Digital Cow Hut**
 
 ## **Live Link: https://cow-hut-auth-mdminhazulislamkhan.vercel.app**
 
@@ -39,8 +39,6 @@
 - /api/v1/admins/create-admin [Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/admins/create-admin)
 
 - Need **name (firstName, lastName), phoneNumber, password, address** from **req.body**
-
-- Need **jwt** from **req.headers.authorization** => (for admin)
 
 ### Admin login (post route)
 
@@ -136,13 +134,13 @@
 
 - api/v1/cows?sortBy=price&sortOrder=asc **[Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/cows?sortBy=price&sortOrder=asc)** => (sortBy and sortOrder {default: asc})
 
-- api/v1/cows?sortBy=price&sortOrder=desc **[Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/cows)** => (sortBy and sortOrder)
+- api/v1/cows?sortBy=price&sortOrder=desc **[Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/cows?sortBy=price&sortOrder=desc)** => (sortBy and sortOrder)
 
-- api/v1/cows?minPrice=20000&maxPrice=80000 **[Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/cows?minPrice=20000&maxPrice=80000)** => (filter by minPrice {default: 0} and maxPrice {default: infinity})
+- api/v1/cows?minPrice=2000&maxPrice=5000 **[Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/cows?minPrice=2000&maxPrice=5000)** => (filter by minPrice {default: 0} and maxPrice {default: infinity})
 
 - api/v1/cows?location=Dhaka **[Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/cows?location=Dhaka)** => (accurate search from name/ location/ breed/ label/ category {case sensitive})
 
-- api/v1/cows?searchTerm=aka **[Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/cows?searchTerm=aka)** => (any matching search from name/ location/ breed/ label/ category {case insensitive})
+- api/v1/cows?searchTerm=udd **[Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/cows?searchTerm=udd)** => (any matching search from name/ location/ breed/ label/ category {case insensitive})
 
 ### Get single cow (get route)
 
@@ -192,9 +190,15 @@
 
 ### Get all orders history (get route)
 
-- /api/v1/orders/all-orders [Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/orders/all-orders)
+- /api/v1/orders [Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/orders)
 
-- Need **jwt** from **req.headers.authorization** => (for admin)
+- Need **jwt** from **req.headers.authorization**
+
+- admin can see all orders
+
+- seller can see those orders which order contains his cow
+
+- buyer can only see those orders for the cow's he has purchased
 
 ### Get single order history (get route)
 
