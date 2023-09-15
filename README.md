@@ -1,4 +1,4 @@
-# **Cow Hut Auth**
+# **Assignment 4: Cow Hut Admin With Auth**
 
 ## **Live Link: https://cow-hut-auth-mdminhazulislamkhan.vercel.app**
 
@@ -32,6 +32,38 @@
 
 ---
 
+## Admin routes
+
+### Create admin (post route)
+
+- /api/v1/admins/create-admin [Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/admins/create-admin)
+
+- Need **name (firstName, lastName), phoneNumber, password, address** from **req.body**
+
+- Need **jwt** from **req.headers.authorization** => (for admin)
+
+### Admin login (post route)
+
+- /api/v1/admins/login [Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/admins/login)
+
+- Need **phoneNumber, password** from **req.body**
+
+### Get admin's own profile (get route)
+
+- /api/v1/admins/my-profile [Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/admins/my-profile)
+
+- Need **jwt** from **req.headers.authorization** => (for admin)
+
+### Update admin's own profile (patch route)
+
+- /api/v1/admins/my-profile [Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/admins/my-profile)
+
+- Need **updated profile info** from **req.body**
+
+- Need **jwt** from **req.headers.authorization** => (for admin)
+
+---
+
 ## User routes
 
 ### Get all users (get route)
@@ -60,7 +92,7 @@
 
 - /api/v1/users/my-profile [Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/users/my-profile)
 
-- Need **jwt** from **req.headers.authorization** => (for admin, buyer, seller)
+- Need **jwt** from **req.headers.authorization** => (for buyer, seller)
 
 ### Update own profile (patch route)
 
@@ -68,7 +100,7 @@
 
 - Need **updated profile info** from **req.body**
 
-- Need **jwt** from **req.headers.authorization** => (for admin, buyer, seller)
+- Need **jwt** from **req.headers.authorization** => (for buyer, seller)
 
 ### Update profile by admin (patch route)
 
@@ -88,7 +120,7 @@
 
 - /api/v1/cows [Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/cows)
 
-- Need cow **name, age, price,location, breed, weight, label, sellerId** from **req.body**
+- Need cow **name, age, price,location, breed, weight, label** from **req.body**
 
 - Need **jwt** from **req.headers.authorization** => (for seller)
 
@@ -98,19 +130,19 @@
 
 - Need **jwt** from **req.headers.authorization** => (for admin, buyer, seller)
 
-### Pagination and Filtering routes of Cows (get route)
+#### Pagination and Filtering routes of Cow listing
 
-- api/v1/cows?page=1&limit=10 (Page {default: 1} and limit {default: 10})
+- api/v1/cows?page=1&limit=5 **[Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/cows?page=1&limit=5)** => (Page {default: 1} and limit {default: 10})
 
-- api/v1/cows?sortBy=price&sortOrder=asc (sortBy and sortOrder {default: asc})
+- api/v1/cows?sortBy=price&sortOrder=asc **[Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/cows?sortBy=price&sortOrder=asc)** => (sortBy and sortOrder {default: asc})
 
-- api/v1/cows?sortBy=price&sortOrder=desc (sortBy and sortOrder)
+- api/v1/cows?sortBy=price&sortOrder=desc **[Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/cows)** => (sortBy and sortOrder)
 
-- api/v1/cows?minPrice=20000&maxPrice=70000 (filter by minPrice {default: 0} and maxPrice {default: infinity})
+- api/v1/cows?minPrice=20000&maxPrice=80000 **[Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/cows?minPrice=20000&maxPrice=80000)** => (filter by minPrice {default: 0} and maxPrice {default: infinity})
 
-- api/v1/cows?location=Dhaka (accurate search)
+- api/v1/cows?location=Dhaka **[Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/cows?location=Dhaka)** => (accurate search from name/ location/ breed/ label/ category {case sensitive})
 
-- api/v1/cows?searchTerm=chattog (any matching search)
+- api/v1/cows?searchTerm=aka **[Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/cows?searchTerm=aka)** => (any matching search from name/ location/ breed/ label/ category {case insensitive})
 
 ### Get single cow (get route)
 
@@ -126,11 +158,11 @@
 
 - Need **jwt** from **req.headers.authorization** => (for seller)
 
+- Need to be the owner of the cow
+
 - Need **updated cow info** from **req.body**
 
 - Need **id** from **req.params**
-
-- Need to be the owner of the cow
 
 ### Delete cow (delete route)
 
@@ -138,9 +170,9 @@
 
 - Need **jwt** from **req.headers.authorization** => (for seller)
 
-- Need **id** from **req.params**
-
 - Need to be the owner of the cow
+
+- Need **id** from **req.params**
 
 ---
 
@@ -150,7 +182,7 @@
 
 - /api/v1/orders [Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/orders)
 
-- Need **cowId, password** from **req.body**
+- Need **cowId** from **req.body**
 
 - Need **jwt** from **req.headers.authorization** => (for buyer)
 
@@ -170,21 +202,9 @@
 
 - Need **id** from **req.params**
 
-- Need **jwt** from **req.headers.authorization** => (for admin, buyer)
+- Need **jwt** from **req.headers.authorization** => (for admin, buyer, seller)
 
 - Need to be a admin or the specific buyer of this order or specific seller of this order
-
----
-
-## Admin routes
-
-### Create admin (post route)
-
-- /api/v1/admins/create-admin [Link](https://cow-hut-auth-mdminhazulislamkhan.vercel.app/api/v1/admins/create-admin)
-
-- Need **name (firstName, lastName), phoneNumber, password, address** from **req.body**
-
-- Need **jwt** from **req.headers.authorization** => (for admin)
 
 ---
 
